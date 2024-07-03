@@ -1,0 +1,20 @@
+/**
+ *   Name: ArrowUp.css
+ * Author: Francisco J. O'Meany
+ * Description: ArrowUp styles for ArrowUp class component for all applications developed by Netequal Technology Solutions & Vysel
+ *
+ * Copyright (c) 2024 - Netequal Technology Solutions
+ *
+ */
+.app-arrow-up {
+    font-size: 3em;
+}
+
+#appUparrowGoTop {
+    position: fixed;
+    display: none;
+    bottom: 4rem;
+    transform: translate(-50%, 50%);
+    top: 90%;
+    left: 50%;
+}

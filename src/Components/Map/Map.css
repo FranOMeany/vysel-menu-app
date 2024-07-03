@@ -1,0 +1,21 @@
+/**
+ *   Name: Map.css
+ * Author: Francisco J. O'Meany
+ * Description: Map styles for Map class component for all applications developed by Netequal Technology Solutions & Vysel
+ *
+ * Copyright (c) 2024 - Netequal Technology Solutions
+ *
+ */
+.app-map {
+    box-shadow: 0 0 10px 0 #000c;
+}
+
+#mapBodyContent a {
+    text-decoration: none;
+    color: #1a73e8;
+    font-weight: 400;
+}
+
+#mapBodyContent a:hover {
+    text-decoration: underline;
+}

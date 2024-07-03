@@ -1,0 +1,18 @@
+/**
+ *   Name: Carousel.css
+ * Author: Francisco J. O'Meany
+ * Description: Carousel styles for Carousel class component for all applications developed by Netequal Technology Solutions & Vysel
+ *
+ * Copyright (c) 2024 - Netequal Technology Solutions
+ *
+ */
+.carousel-item img {
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    min-width: 100% !important;
+    height: 400px !important;
+    max-width: none !important;
+    object-fit: cover !important;
+    opacity: .5 !important;
+  }

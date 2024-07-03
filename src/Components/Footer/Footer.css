@@ -1,0 +1,22 @@
+/**
+ *   Name: Footer.css
+ * Author: Francisco J. O'Meany
+ * Description: Footer styles for Footer class component for all applications developed by Netequal Technology Solutions & Vysel
+ *
+ * Copyright (c) 2024 - Netequal Technology Solutions
+ *
+ */
+.app-footer {
+    background: #f1f6fe;
+    box-shadow: 0 0 15px 0;
+    color: #444;
+    font-size: 1.2rem;
+    padding: 0 0 30px;
+}
+
+.app-social-icons {
+    font-weight: 400;
+    font-size: 2em;
+    color: #106eea;
+    text-decoration: none;
+}
