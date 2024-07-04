@@ -36,7 +36,7 @@ class MenuList extends React.Component {
         document.addEventListener('readystatechange', function() {                                              //- When component is mounted add EventListener
 			if (document.readyState === 'complete') {                                                           //- When completed and 
 				if( !self.mounted ) {                                                                           //- the component has not been mounted (is mounted twice by React)
-                    self.Utl.appLogger('React app DOM is fully loaded on MenuList component. Language is: ', 
+                    self.Utl.appLogger('React app DOM fully loaded on MenuList component. Language is: ', 
                             self.lng);
 
                     let accord 		= document.getElementById("appMenuItemsDesc");                              //- Get the accordion templates list

@@ -21,76 +21,75 @@ import { GiHamburger } from "react-icons/gi";
 import { FaMapLocationDot } from "react-icons/fa6";
 import Utility from '../Utility/Utility';
 
-
 class AppNavbar extends React.Component {
     constructor( props ) {
         super(props);
-		this.profile	= null;
-		this.Utl		= new Utility();
-		this.state		= { show: false };
-        this.mounted	= false;				//- In React version 18, a change was made to strict mode so that components will mount, then unmount, then mount again. 
-		this.lng 		= this.Utl.getCookie("appLang");
-		this.theme		= "1";
+		this.profile	= null;																						//- Set null Profile
+		this.Utl		= new Utility();																			//- Get an instance of our Utility class
+		this.state		= { show: false };																			//- Set show OffCanvas state
+        this.mounted	= false;																					//- In React version 18, a change was made to strict mode so 
+		this.lng 		= this.Utl.getCookie("appLang");															//- that components will mount, then unmount, then mount again. 
     }
 
-	componentDidMount() {
-		this.setState({ show: false });
-		const self		= this;
+	componentDidMount() {																							//- When component is mounted
+		const self		= this;																						//- Set self as our class for future reference
+		
+		document.addEventListener('readystatechange', function() {													//- Add a 'readystatechange' event listener
+			if (document.readyState === 'complete') {																//- When the readyState is completed
+				if( !self.mounted ) {																				//- and this component has not been mounted
+					self.Utl.appLogger('React app DOM fully loaded on Navbar component. Language is: ', self.lng);	//- Log mounted event and show current language
 
-		document.addEventListener('readystatechange', function() {
-			if (document.readyState === 'complete') {
-				if( !self.mounted ) {
-					self.Utl.appLogger('React app DOM is fully loaded on Header component. Language is: ', self.lng);
-
-					self.profile = JSON.parse(localStorage.getItem('profile'));
-					if (self.profile) {
-						self.Utl.appLogger("LocalProfile: ", self.profile );
+					self.profile = JSON.parse(localStorage.getItem('profile'));										//- Get profile data from localStorage
+					if (self.profile) {																				//- If we successfully got the profile data
+						self.Utl.appLogger("LocalProfile: ", self.profile );										//- Log and show profile data
 					}
 
-					document.getElementsByTagName('title')[0].innerHTML = self.profile.account.cus_bus_name + " - " + ( self.lng === 'en' ? 'Home' : 'Página Princpal' );
-                    document.querySelectorAll('.acctBusName').forEach( (x) => { x.innerHTML = self.profile.account.cus_bus_name } );
+					document.getElementsByTagName('title')[0].innerHTML = 											//- Set main page title to
+					self.profile.account.cus_bus_name + " - " + ( self.lng === 'en' ? 'Home' : 'Página Princpal' );	//- account name in English or Spanish language
+                    document.querySelectorAll('.acctBusName').forEach( (x) => 										//- Change all references to
+						{ x.innerHTML = self.profile.account.cus_bus_name } );										//- Account name and set our component as
 
-					self.mounted = true;
+					self.mounted = true;																			//- mounted to avoid to do it twice as React does it
 				}
 			}
 		});
 	}
 
 
-    scrollToMap = () => {
-		const scrollToItem 	= document.getElementById( "appMap" );
-		scrollToItem.scrollIntoView( { behavior: "smooth",  inline:  'start', block: "start" } );
+    scrollToMap = () => {																							//- Handle scroll to Map
+		const scrollToItem 	= document.getElementById( "appMap" );													//- Get map element div
+		scrollToItem.scrollIntoView( { behavior: "smooth",  inline:  'start', block: "start" } );					//- Scroll to Map
 	}
 
-    handleClose = () => this.setState({ show: false });
-  	handleShow  = () => this.setState({ show: true });
+    handleClose = () => this.setState({ show: false });																//- Handle close canvas
+  	handleShow  = () => this.setState({ show: true });																//- Handle show canvas
 
-    handleLanguage( event ) {
-        let Utl = new Utility();
-        let lng = Utl.getCookie( "appLang" );
-        let language = ( lng === 'en' ? 'es' : 'en' );
-        Utl.setCookie( "appLang", language, 30 );
-        document.location.reload()
-        event.preventDefault();
+    handleLanguage( event ) {																						//- Handle language selection
+        let Utl = new Utility();																					//- Get an instance of our Utility class
+        let lng = Utl.getCookie( "appLang" );																		//- Get previous language selection
+        let language = ( lng === 'en' ? 'es' : 'en' );																//- If English set Spanish otherwise set English language
+        Utl.setCookie( "appLang", language, 30 );																	//- Set current language selection
+        document.location.reload()																					//- Reload page
+        event.preventDefault();																						//- Prevent default
     }
 
 	handleOffCanvas = () => {
 		const self = this;
 		this.Utl.appLogger("onShow left canvas");
-		document.getElementById('acctBusNameCanvas').innerHTML = this.profile.account.cus_bus_name;
+		document.getElementById('acctBusNameCanvas').innerHTML = this.profile.account.cus_bus_name;					//- Set account business name
 		document.getElementById('acctFoodTypeCanvas').innerHTML = 
-			( this.lng === 'en' ? this.profile.account.cus_food_type_en : this.profile.account.cus_food_type_es );
+			( this.lng === 'en' ? this.profile.account.cus_food_type_en : this.profile.account.cus_food_type_es );	//- Set food type in English or Spanish
 		document.getElementById('appBusDesc').innerHTML = 
-			( this.lng === 'en' ? this.profile.account.cus_bus_desc_en : this.profile.account.cus_bus_desc_es );
+			( this.lng === 'en' ? this.profile.account.cus_bus_desc_en : this.profile.account.cus_bus_desc_es );	//- Set business description in English or Spanish
 
-		let chkEng = document.getElementById("switchEnglish");
-		let chkSpa = document.getElementById("switchSpanish");
-		if( this.lng === "en" ) {
-			chkSpa.removeAttribute("checked");
-			chkEng.setAttribute("checked", "checked");
-		} else {
-			chkEng.removeAttribute("checked");
-			chkSpa.setAttribute("checked", "checked");
+		let chkEng = document.getElementById("switchEnglish");														//- Get English and
+		let chkSpa = document.getElementById("switchSpanish");														//- Spanish switches
+		if( this.lng === "en" ) {																					//- If current language is English
+			chkSpa.removeAttribute("checked");																		//- uncheck Spanish switch and
+			chkEng.setAttribute("checked", "checked");																//- check English switch
+		} else {																									//- Otherwise
+			chkEng.removeAttribute("checked");																		//- Uncheck English switch and
+			chkSpa.setAttribute("checked", "checked");																//- Check Spanish switch
 		}
 
 		this.Utl.appLogger( "Categories for offCanvas menu", this.profile.categories );
@@ -164,7 +163,7 @@ class AppNavbar extends React.Component {
 					</Navbar>
 				</div>
 			</div>
-            <Offcanvas show={this.state.show} onHide={this.handleClose} onShow={this.handleOffCanvas}>
+            <Offcanvas show={this.state.show} onHide={this.handleClose} onShow={this.handleOffCanvas}>		
                 <Offcanvas.Header closeButton className="appHeaderCloseButton">
                     <Offcanvas.Title>
                         <FaUtensils className='me-2' />
