@@ -20,6 +20,7 @@ import { GrLanguage } from "react-icons/gr";
 import { GiHamburger } from "react-icons/gi";
 import { FaMapLocationDot } from "react-icons/fa6";
 import Utility from '../Utility/Utility';
+import "./Navbar.css";
 
 class AppNavbar extends React.Component {
     constructor( props ) {
@@ -37,11 +38,11 @@ class AppNavbar extends React.Component {
 		document.addEventListener('readystatechange', function() {													//- Add a 'readystatechange' event listener
 			if (document.readyState === 'complete') {																//- When the readyState is completed
 				if( !self.mounted ) {																				//- and this component has not been mounted
-					self.Utl.appLogger('React app DOM fully loaded on Navbar component. Language is: ', self.lng);	//- Log mounted event and show current language
+					self.Utl.appLogger('React app DOM fully loaded on Navbar component. Lang is: ', self.lng);		//- Log mounted event and show current language
 
 					self.profile = JSON.parse(localStorage.getItem('profile'));										//- Get profile data from localStorage
 					if (self.profile) {																				//- If we successfully got the profile data
-						self.Utl.appLogger("LocalProfile: ", self.profile );										//- Log and show profile data
+						//self.Utl.appLogger("Profile from Navbar: ", self.profile );									//- Log and show profile data
 					}
 
 					document.getElementsByTagName('title')[0].innerHTML = 											//- Set main page title to
@@ -106,8 +107,9 @@ class AppNavbar extends React.Component {
 				const itemIndex 	= parseInt( args.target.name );													//- Get item index
 				const itemLocation 	= "appMenuItem" + itemIndex;													//- Set item ID based on index
 				const scrollToItem 	= document.getElementById( itemLocation );										//- Get item element
+				scrollToItem.style.scrollMarginTop = "60px";														//- Scroll up to show entire header
+
 				const itemStatus 	= scrollToItem.getAttribute("status");											//- Get item current status
-				//const itemStatus = document.getElementById( itemLocation ).getAttribute("status");
 
 				if( itemStatus === "closed" || itemStatus === null ) {												//- If menu items container is closed
 					document.getElementsByClassName("accordion-button")[itemIndex].click();							//- Click accordion to open
@@ -115,11 +117,10 @@ class AppNavbar extends React.Component {
 
 				document.getElementsByClassName("btn-close")[0].click();											//- Close menu canvas by clicking close button
 
-
 				let timerId = setInterval(function() {																//- Set timer to
 					scrollToItem.scrollIntoView( { behavior: "smooth",  inline:  'start', block: "start" } );		//- scroll menu items into view
 					clearInterval(timerId);																			//- Clear timer
-				}, 750);
+				}, 500);
 
 				self.Utl.appLogger( "itemLocation: ", itemLocation );
 

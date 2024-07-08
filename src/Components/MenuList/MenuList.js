@@ -7,9 +7,10 @@
  *
  */
 import React from 'react';
+import { createPortal } from 'react-dom';
 import Utility from '../Utility/Utility';
+import ModalBox from '../ModalBox/ModalBox';
 import Accordion from 'react-bootstrap/Accordion';
-import { IoFastFood } from "react-icons/io5";
 import "./MenuList.css";
 
 class MenuList extends React.Component {
@@ -24,10 +25,12 @@ class MenuList extends React.Component {
         this.heading    = this.profile.account.cus_bus_name;
         this.mapContent = 
         ( this.lng === "es" ? this.profile.account.cus_bus_desc_es : this.profile.account.cus_bus_desc_en );
-        this.state		= { collapse: false };
+        this.state		= { collapse: false, showModal: false };
 
         this.Utl.appLogger("this class: ", this );
         this.Utl.appLogger("Profile from MenuList: ", this.profile );
+
+        this.handleModalExit = this.handleModalExit.bind(this);
     }
 
     componentDidMount() {
@@ -36,50 +39,42 @@ class MenuList extends React.Component {
         document.addEventListener('readystatechange', function() {                                              //- When component is mounted add EventListener
 			if (document.readyState === 'complete') {                                                           //- When completed and 
 				if( !self.mounted ) {                                                                           //- the component has not been mounted (is mounted twice by React)
-                    self.Utl.appLogger('React app DOM fully loaded on MenuList component. Language is: ', 
+                    self.Utl.appLogger('React app DOM fully loaded on MenuList component. Lang is: ', 
                             self.lng);
-
-                    let accord 		= document.getElementById("appMenuItemsDesc");                              //- Get the accordion templates list
-					let liveItems 	= self.profile.categories.length;                                           //- Get the current categories length and
-					for( let x = liveItems; x < 20; x++ ) {                                                     //- Go through the rest of the templates
-						let menuItem = document.getElementById( "appMenuItem" + x );                            //- One by one and then
-						accord.removeChild( menuItem );                                                         //- Remove it
-					}
 
 					self.profile.categories.forEach( function( cat ) {                                          //- Go through each category template
 						let menuHeader = document.getElementById( "appItemHeader" + cat.cat_position );         //- Get template header element and
 						menuHeader.innerHTML = ( self.lng === 'en' ? cat.cat_desc_en : cat.cat_desc_es );       //- add the corresponding language text
+                        let catImage = "./assets/images/samples/" + cat.cat_image;                              //- Get category image
+                        document.getElementById( "appCatImage" + 
+                                                cat.cat_position ).setAttribute( "src", catImage );             //- Set category image
 					});
 
                     if( self.profile.displayItems[0].itm_group !== undefined ) {                                //- If we have items on this profile
-                        let imgPath = "/src/Assets/images/";                                                    //- Set images path
+                        let imgPath = "./assets/images/";                                                       //- Set images path
                         let thisGroup = self.profile.displayItems[0].itm_group;                                 //- Get current group
                         let groupId = "appFoodItems" + thisGroup;                                               //- Get group ID
                         let itemsGroup = document.getElementById( groupId );                                    //- Get group element
                         let menuRow = document.createElement( "div" );                                          //- Create menu row element
                         menuRow.setAttribute( "class", "row" );                                                 //- Set menu row class
                         let menuCol = document.createElement( "div" );                                          //- Create menu column
-                        menuCol.setAttribute( "class", "col-md-3 mb-3 d-flex align-items-stretch" );            //- Set menu column class
+                        menuCol.setAttribute( "class", "col-md-3 mb-3 d-flex align-items-stretch app-menu-items" );            //- Set menu column classes
                         let menuCrd = document.createElement( "div" );                                          //- Create card element
                         menuCrd.setAttribute( "class", "card app-card-width app-card-display" );                //- Set card class
 
                         let colItems = 0;                                                                       //- Column items
 
                         self.profile.displayItems.forEach( function( item ) {
-                            //- If different group or items on this row reach 4
-                            if( thisGroup !== item.itm_group || colItems === 4 ) {
-                                //- Append current row to menu section
-                                itemsGroup = document.getElementById( groupId );
-                                itemsGroup.append( menuRow );
-                                colItems = 0;
+                            
+                            if( thisGroup !== item.itm_group || colItems === 4 ) {                              //- If different group or items on this row reach 4
+                                itemsGroup = document.getElementById( groupId );                                //- Get group ID
+                                itemsGroup.append( menuRow );                                                   //- Append current row to menu section
+                                colItems = 0;                                                                   //- Set column items to 0
+                                menuRow = document.createElement( "div" );                                      //- Redifine new menu row element
+                                menuRow.setAttribute( "class", "row" );                                         //- Set class attribute to new row element
 
-                                //- Redifine new menu row
-                                menuRow = document.createElement( "div" );
-                                menuRow.setAttribute( "class", "row" );
-
-                                //- Set current group
-                                thisGroup = item.itm_group;
-                                groupId = "appFoodItems" + thisGroup;
+                                thisGroup = item.itm_group;                                                     //- Set new current group
+                                groupId = "appFoodItems" + thisGroup;                                           //- Set new group ID
                             }
 
                             let acctPath = imgPath + item.itm_account;
@@ -110,8 +105,10 @@ class MenuList extends React.Component {
                             itemPriceAmt.innerHTML = "$" + item.itm_price;
                             itemPrice.append( itemPriceAmt );
 
+                            const itemGroupName = ( self.lng === 'es' ? self.profile.categories[item.itm_group].cat_desc_es : self.profile.categories[item.itm_group].cat_desc_en );
                             menuCrd = document.createElement( "div" );
                             menuCrd.setAttribute( "class", "card app-card-width app-card-display" );
+                            menuCrd.setAttribute( "data-parent-group", itemGroupName );
 
                             //- Fill card
                             menuCrd.append( imgDiv );
@@ -119,7 +116,7 @@ class MenuList extends React.Component {
                             menuCrd.append( itemPrice );
 
                             menuCol = document.createElement( "div" );
-                            menuCol.setAttribute( "class", "col-md-3 mb-3 d-flex align-items-stretch" );
+                            menuCol.setAttribute( "class", "col-md-3 mb-3 d-flex align-items-stretch app-menu-items" );
 
                             //- Set item
                             menuCol.append( menuCrd );
@@ -132,14 +129,36 @@ class MenuList extends React.Component {
                         itemsGroup.append( menuRow );
                     }
 
+                    const items = document.getElementsByClassName("app-menu-items");                            //- Get all menu items
+
+                    for( let x = 0; x < items.length; x++ ) {                                                   //- Loop through each menu item
+                        items[x].children[0].addEventListener( "click", function( e ) {                         //- Add a click event listener for each item
+                            self.Utl.appLogger("item: ", items[x].children[0] );
+
+                            const menuItemShown = items[x].children[0];                                         //- Get menu item
+                            const menuGroupName = menuItemShown.getAttribute( "data-parent-group" );            //- Get menu item group name
+                            self.Utl.appLogger("Item group name: ", menuGroupName );
+
+                            self.setState({showModal: true});                                                   //- Change state to show modal dialog
+
+                            let timerId = setInterval(function() {                                              //- Set an interval timer and
+                                const appDiv = document.getElementById( "appMenuDescription" );                 //- get the dialog body div
+                                if( appDiv !== null ) {                                                         //- If dialog body is available then
+                                    document.getElementById( "contained-modal-title-vcenter" ).innerHTML =      //- Set dialog header title with the
+                                            menuGroupName;                                                      //- group name
+                                    const clonedItem = menuItemShown.cloneNode( true );                         //- Clone the menu item and
+                                    appDiv.append(clonedItem);                                                  //- append it to the dialog body
+                                    clearInterval(timerId);                                                     //- Clear the interval
+                                }
+		                    }, 75);                                                                             //- Interval every 75 millisecs
+                        })
+                    }
+
                     self.mounted = true;                                                                        //- This component has been mounted and completed
                 }
             }
         });
     }
-
-    
-
 
     handleOnEnter = ( itemKey ) => {
         this.Utl.appLogger( "onEnter Item clicked: ", itemKey );
@@ -160,193 +179,34 @@ class MenuList extends React.Component {
         document.getElementById( itemLocation ).setAttribute( "status", ( itemStatus === "closed" || itemStatus === null ? "open" : "closed" ) );
     }
 
+    handleModalExit = (e) => {
+        this.setState({showModal: false});
+    }
+
+    renderCategories = ( categories ) => {
+        return categories.map((cat, index) => (                                                                     //- A unique key is required by react
+            <Accordion.Item eventKey={cat.cat_position} id={"appMenuItem" + cat.cat_position} key={cat.cat_position}>
+                <Accordion.Header><h4 className='me-2'>
+                    <img id={"appCatImage" + cat.cat_position}  src="" alt="" className='app-cat-image' />
+                    </h4><h4 id={"appItemHeader" + cat.cat_position}>Menu #{cat.cat_position}</h4>
+                </Accordion.Header>
+                <Accordion.Body id={"appFoodItems" + cat.cat_position} onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index={cat.cat_position}>
+                </Accordion.Body>
+            </Accordion.Item>
+        ));
+    }
+
     render () {
+        const categories = this.renderCategories( this.profile.categories );
+
         return(
             <>
             <Accordion id="appMenuItemsDesc" className='mt-2' alwaysOpen="true">
-                <Accordion.Item eventKey="0" id="appMenuItem0">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader0">Menu #1</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems0" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="0">
-                    {/*
-                    <div className="row">
-                        <div className="col-md-3 mb-3 d-flex align-items-stretch">
-                            <div className="card app-card-width app-card-display">
-                                <div className='app-card-img'>
-                                    <img className="card-img-top" alt="" src="/src/Assets/images/food_girl.jpg?fit=crop&fm=jpg&h=375&w=500" />
-                                </div>
-                                <div className="card-body d-flex flex-column">
-                                    <h5 className="card-title">Pollo Tortelloni Alfredo</h5>
-                                    <p className="card-text mb-4">Tortellini relleno de queso Asiago hornado en alfredo con una mezcla de quesos Italianos y pan molido tostado y cubierto de piezas de pollo asado.</p>
-                                </div>
-                                <div className="app-card-outmore">
-                                    <h5 className="app-card-price">$23.49</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3 mb-3 d-flex align-items-stretch">
-                            <div className="card app-card-width app-card-display">
-                                <div className='app-card-img'>
-                                    <img className="card-img-top" alt="" src="https://images.unsplash.com/photo-1615996001375-c7ef13294436?fit=crop&fm=jpg&h=375&w=500" />
-                                </div>
-                                <div className="card-body d-flex flex-column">
-                                    <h5 className="card-title">Card Title</h5>
-                                    <p className="card-text mb-4"><span>We respect your privacy.</span></p>
-                                </div>
-                                <div className="app-card-outmore">
-                                    <h5 className="app-card-price">$7.99</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3 mb-3 d-flex align-items-stretch">
-                            <div className="card app-card-width app-card-display">
-                                <div className="app-card-img">
-                                    <img className="card-img-top" alt="" src="https://images.unsplash.com/photo-1573225342356-dcf083550790?w=500&auto=format&fit=crop" />
-                                </div>
-                                <div className="card-body d-flex flex-column">
-                                    <h5 className="card-title">Card Title</h5>
-                                    <p className="card-text mb-4">
-                                        We respect your privacy.
-                                    </p>
-                                </div>
-                                <div className="app-card-outmore">
-                                    <h5 className="app-card-price">$7.99</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3 mb-3 d-flex align-items-stretch">
-                            <div className="card app-card-width app-card-display">
-                                <div className="app-card-img">
-                                    <img className="card-img-top" alt="" src="https://images.unsplash.com/photo-1574484284002-952d92456975?fit=crop&fm=jpg&h=375&w=500" />
-                                </div>
-                                <div className="card-body d-flex flex-column">
-                                    <h5 className="card-title">Pollo Tortelloni Alfredo</h5>
-                                    <p className="card-text mb-4">
-                                        Tortellini relleno de queso Asiago hornado en alfredo con una mezcla de quesos Italianos y pan molido tostado y 
-                                        cubierto de piezas de pollo asado.
-                                    </p>
-            			        </div>
-                                <div className="app-card-outmore">
-                                    <h5 className="app-card-price">$23.49</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="col-md-3 mb-3 d-flex align-items-stretch">
-                            <div className="card app-card-width app-card-display">
-                                <div className="app-card-img">
-                                    <img className="card-img-top" alt="" src="https://plus.unsplash.com/premium_photo-1716892885706-6ddba966e05f?q=80&w=388&auto=format&fit=crop" />
-                                </div>
-                                <div className="card-body d-flex flex-column">
-                                    <h5 className="card-title">Pollo Tortelloni Alfredo</h5>
-                                    <p className="card-text mb-4">
-                                        Tortellini relleno de queso Asiago hornado en alfredo con una mezcla de quesos Italianos y pan molido tostado y 
-                                        cubierto de piezas de pollo asado.
-                                    </p>
-            			        </div>
-                                <div className="app-card-outmore">
-                                    <h5 className="app-card-price">$23.49</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-3 mb-3 d-flex align-items-stretch">
-                            <div className="card app-card-width app-card-display">
-                                <div className="app-card-img">
-                                    <img className="card-img-top" alt="" src="https://images.unsplash.com/photo-1550586554-a5a846e56593?w=500&auto=format&fit=crop" />
-                                </div>
-                                <div className="card-body d-flex flex-column">
-                                    <h5 className="card-title">Card Title</h5>
-                                    <p className="card-text mb-4">
-                                        We respect your privacy.
-                                    </p>
-                                </div>
-                                <div className="app-card-outmore">
-                                    <h5 className="app-card-price">$7.99</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    */}
-                    </Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="1" id="appMenuItem1">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader1">Menu #2</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems1" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="1"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="2" id="appMenuItem2">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader2">Menu #3</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems2" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="2"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="3" id="appMenuItem3">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader3">Menu #4</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems3" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="3"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="4" id="appMenuItem4">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader4">Menu #5</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems4" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="4"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="5" id="appMenuItem5">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader5">Menu #6</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems5" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="5"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="6" id="appMenuItem6">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader6">Menu #7</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems6" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="6"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="7" id="appMenuItem7">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader7">Menu #8</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems7" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="7"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="8" id="appMenuItem8">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader8">Menu #9</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems8" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="8"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="9" id="appMenuItem9">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader9">Menu #10</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems9" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="9"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="10" id="appMenuItem10">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader10">Menu #11</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems10" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="10"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="11" id="appMenuItem11">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader11">Menu #12</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems11" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="11"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="12" id="appMenuItem12">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader12">Menu #13</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems12" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="12"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="13" id="appMenuItem13">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader13">Menu #14</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems13" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="13"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="14" id="appMenuItem14">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader14">Menu #15</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems14" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="14"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="15" id="appMenuItem15">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader15">Menu #16</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems15" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="15"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="16" id="appMenuItem16">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader16">Menu #17</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems16" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="16"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="17" id="appMenuItem17">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader17">Menu #18</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems17" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="17"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="18" id="appMenuItem18">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader18">Menu #19</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems18" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="18"></Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="19" id="appMenuItem19">
-                    <Accordion.Header><h4 className='me-2'><IoFastFood /></h4><h4 id="appItemHeader19">Menu #20</h4></Accordion.Header>
-                    <Accordion.Body id="appFoodItems19" onEnter={this.handleOnEnter} onExit={this.handleOnExit} data-index="19"></Accordion.Body>
-                </Accordion.Item>
+                { categories }
             </Accordion>
+            {this.state.showModal &&
+                createPortal( <ModalBox show={true} onExit={this.handleModalExit} title={''} closeBtn={this.lng === 'es' ? "Cierre" : "Close"} />, document.body )
+            }
             </>
         );
     }

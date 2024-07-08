@@ -17,9 +17,10 @@ import './Map.css';
 class MapSection extends Component {
     constructor(props) {
         super(props);
-        this.Utl    = new Utility();                                                                                //- Get an instance of our Utility class
+        this.param      = props;
+        this.Utl        = new Utility();                                                                            //- Get an instance of our Utility class
         this.mounted	= false;																					//- In React version 18, a change was made to strict mode so 
-        this.state = {};                                                                                            //- that components will mount, then unmount, then mount again. 
+        this.state      = {};                                                                                       //- that components will mount, then unmount, then mount again. 
     }
 
     componentDidMount() {        
@@ -29,13 +30,14 @@ class MapSection extends Component {
         document.addEventListener('readystatechange', function() {
             if (document.readyState === 'complete') {
                 if( !self.mounted ) {
-                    self.Utl.appLogger('React app DOM fully loaded on Map component. Language is: ', self.lng);	    //- Log mounted event and show current language
+                    const language = self.props.lang;
+                    self.Utl.appLogger('React app DOM fully loaded on Map component. Lang is: ', language);	        //- Log mounted event and show current language
 
                     const loader = new Loader({                                                                     //- Set loader parameters
                         apiKey: apiKey,
                         version: "weekly",
                         libraries: ["places"],
-                        language: self.props.lang.toUpperCase()                                                     //- Google recognizes the location in UPPER CASE ONLY
+                        language: language.toUpperCase()                                                            //- Google recognizes the location in UPPER CASE ONLY
                     });
                     
                     const defaultMapOptions = {
@@ -61,7 +63,7 @@ class MapSection extends Component {
             
                                 const mapMsg = ( self.props.lang === "es" ? "Ver en Google Maps" : "View on Google Maps" );
                                 const contentString = `
-                                <div id="content">
+                                <div id="mapContent">
                                     <div id="siteNotice"></div>
                                     <h3 id="firstHeading" class="firstHeading">`+heading+`</h3>
                                     <div id="mapBodyContent">
@@ -104,7 +106,6 @@ class MapSection extends Component {
                                       map,
                                     });
                                 });
-                                
             
                                 //    store them in the state so you can use it later
                                 //    E.g. call a function on the map object:
@@ -123,20 +124,6 @@ class MapSection extends Component {
                 }
             }
         });
-
-
-
-
-
-
-        
-
-
-
-
-
-        /*
-        */
     }
 
     render() {

@@ -47,7 +47,7 @@ class Utility extends React.Component {
     }
     initialize = () => {
         useEffect(()=>{
-            this.appLogger('We are in useEffect function');
+            this.appLogger('Initialize(): We are in useEffect function');
         
             let links = document.querySelectorAll('a[href*="#"]');    //- Hide hash + ref
             links.forEach(link => {
@@ -95,7 +95,6 @@ class Utility extends React.Component {
         } else {
             c_value = encodeURIComponent(value) + ((exdays==null) ? "" : "; expires=" + exdate.toUTCString()) + "; path=/; SameSite=None; domain=" + domain + "; Secure";
         }
-        
         document.cookie = c_name + "=" + c_value;
         return;
     }
@@ -111,7 +110,6 @@ class Utility extends React.Component {
 	//-- appLogger()
 	//-----------------------------------------------------------//
 	appLogger( logStr = null, value = null ) {
-		// logging facility
         if( logStr === null ) {
             this.logObj.log( "Log Facility is " + this.logStatus );
         }

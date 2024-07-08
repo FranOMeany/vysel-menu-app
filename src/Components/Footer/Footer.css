@@ -20,3 +20,8 @@
     color: #106eea;
     text-decoration: none;
 }
+
+.app-footer-developer {
+    position: relative !important;
+    right: 1.5rem !important;
+}

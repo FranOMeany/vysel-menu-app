@@ -20,8 +20,8 @@ import { FaCcApplePay } from "react-icons/fa";
 import { FaMoneyBillAlt } from "react-icons/fa";
 import { BiSolidDish } from "react-icons/bi";
 import Utility from '../Utility/Utility';
-import logo from '../../Assets/images/mainLogo.jpg'
-import map from '../../Assets/images/map.png';
+import logo from '../../mainLogo.jpg';
+import map from '../../map.png';
 import '../Header/Header.css';
 
 class Header extends Component {
@@ -46,11 +46,11 @@ class Header extends Component {
 		document.addEventListener('readystatechange', function() {
 			if (document.readyState === 'complete') {
 				if( !self.mounted ) {
-					self.Utl.appLogger('React app DOM fully loaded on Header component. Language is: ', self.lng);
+					self.Utl.appLogger('React app DOM fully loaded on Header component. Lang is: ', self.lng);
 
 					self.profile = JSON.parse(localStorage.getItem('profile'));
 					if (self.profile) {
-						self.Utl.appLogger("LocalProfile: ", self.profile );
+						//self.Utl.appLogger("Profile from Header: ", self.profile );
 					}
 
 					self.theme = self.profile.account.cus_bus_template;

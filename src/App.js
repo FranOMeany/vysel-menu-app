@@ -17,22 +17,27 @@ import Utility from './Components/Utility/Utility';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 
-
 function App() {
   let utl = new Utility();                                                                //- Load the Utility class
-  const profile	  = JSON.parse(localStorage.getItem('profile'));                          //- Get profile information
-  const address   = profile.account.cus_bus_full_address;                                 //- Get business address
-  const lang 		  = utl.getCookie("appLang");                                             //- Get current language
-  const zoom      = 15;                                                                   //- Set map zoom
-  const busName   = profile.account.cus_bus_name;                                         //- Get business name
-  const mapContent = ( lang === "es" ? profile.account.cus_bus_desc_es :                  //- Get map content depending on
-                       profile.account.cus_bus_desc_en );                                 //- current language selection
-  const isCarousel = ( profile.account.cus_bus_template === "2" ? true : false );         //- Check if Carousel form is selected
-  utl.initialize();                                                                       //- Initialize application
-  utl.appLogger( "Profile from App: ", profile );
-
+  const profile	    = JSON.parse(localStorage.getItem('profile'));                        //- Get profile information
+  const address     = profile.account.cus_bus_full_address;                               //- Get business address
+  const zoom        = 15;                                                                 //- Set map zoom
+  const busName     = profile.account.cus_bus_name;                                       //- Get business name
+  const isCarousel  = ( profile.account.cus_bus_template === "2" ? true : false );        //- Check if Carousel form is selected
+  let lang 		      = utl.getCookie("appLang");                                           //- Get current language
   
-  return (
+  if( lang === undefined || lang === '' ) {																	              //- If current language is undefined then
+    lang = 'en';																						                              //- Language should be English
+    utl.setCookie( "appLang", lang, 30 );																			            //- Set cookie with new current language
+  }
+
+  const mapContent = ( lang === "es" ? profile.account.cus_bus_desc_es :                  //- Get map content depending on
+    profile.account.cus_bus_desc_en );                                                    //- current language selection
+
+  utl.initialize();                                                                       //- Initialize application
+  //utl.appLogger( "Profile from App: ", profile );
+  
+  return (                                                                                //- Render components
     <div className="App bg-white">
       <AppNavbar />
       { isCarousel 

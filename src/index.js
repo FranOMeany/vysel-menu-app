@@ -17,24 +17,21 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-const messages = {
-	'en': English,
-	'es': Spanish
+const messages = {																									//- Language messages in
+	'en': English,																									//- English and
+	'es': Spanish																									//- Spanish
 };
 
-var utility = new Utility();
-console.log("Utility: ", utility);
-let utl = new Utility();
-let lng = utl.getCookie("appLang");
+var utl = new Utility();																							//- Get an instance of our Utility class
+console.log("Utility: ", utl);																						//- Show object to set debug on/off
+let language = utl.getCookie("appLang");																			//- Get current language
 
-if( lng === undefined || lng === '' ) {
-  lng = 'en';
-  utl.setCookie( "appLang", lng, 30 );
+if( language === undefined || language === '' ) {																	//- If current language is undefined then
+	language = 'en';																								//- Language should be English
+  utl.setCookie( "appLang", language, 30 );																			//- Set cookie with new current language
 }
 
-const language = lng;
-
-let acct = utl.getAccount();
+let acct = utl.getAccount();																						//- Get account # passed on url ( i.e. ?acct=000000000000)
 if( acct === null ) {
   //- Redirect to main application (i.e. https://vysel.com)
 }
@@ -49,32 +46,31 @@ if( acct === null ) {
 
 */
 
-utl.appLogger("Account: ", acct );
+utl.appLogger("Account: ", acct );																					//- Show account number being passed
 
-
-const data = {
-  "method": 10,
-  "account": acct
+const data = {																										//- Data to retreive account information
+  "method": 10,																										//- Method
+  "account": acct																									//- Account number
 }
 
-let server = ( window.location.host === "localhost:3000" ? "./src/api/menuAgent.php" : "/api/menuAgent.php" );
-axios.post( server, data, {
+let server = ( window.location.host === "localhost:3000" ? "./public/api/menuAgent.php" : "/api/menuAgent.php" );	//- Get server location depending on Dev/Production
+axios.post( server, data, {																							//- Post data to server
 	headers: {
 		'Content-Type': 'application/json; charset=utf-8'
 	}
 })
-.then(function (response) {
-	utl.appLogger( "axios response: ", response);
-	if( response.status === 200 ) {
-		localStorage.setItem( 'profile', JSON.stringify( response.data ) );
+.then(function (response) {																							//- Get response
+	utl.appLogger( "axios response: ", response);																	//- Log response
+	if( response.status === 200 ) {																					//- If response is OK
+		localStorage.setItem( 'profile', JSON.stringify( response.data ) );											//- Store response data in local storage
 	}
-})
-.catch(function (error) {
-	utl.appLogger( "axios error: ", error);
+})																													//- Otherwise
+.catch(function (error) {																							//- Get error
+	utl.appLogger( "axios error: ", error);																			//- Log error
 });
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+const root = ReactDOM.createRoot(document.getElementById('root'));													//- Get root and 
+root.render(																										//- Render App and wrap IntlProvider for translations
   <React.StrictMode>
 	<IntlProvider locale={language} defaultLocale={language} messages={messages[language]}>
     	<App />

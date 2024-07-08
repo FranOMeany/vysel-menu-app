@@ -7,7 +7,7 @@
  *
  */
 body {
-    background-image: url(/src/Assets/images/main-bg.png);
+    background-image: url(/src/main-bg.png);
 }
 
 .app-card-width {
@@ -60,10 +60,19 @@ body {
     border-radius: 25px 25px 0 0;
 }
 
+.app-cat-image {
+    width: 6rem !important;
+    border-radius: 30% !important;
+}
+
 .card-img-top {
     width: 100%;
     height: 15vw;
     object-fit: cover;
+}
+
+.app-menu-items:hover {
+    cursor: pointer;
 }
 
 @media screen and (max-width: 767px) {

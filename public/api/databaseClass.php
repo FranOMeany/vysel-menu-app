@@ -17,7 +17,7 @@ class databaseClass {
         date_default_timezone_set('America/Los_Angeles');
         
         $currentServer = str_replace( "www.", "", strtolower( $_SERVER["SERVER_NAME"] ) );
-        $this->environment = ( in_array( $currentServer, Array( "localhost", "dev.menus.com", "dev.admin.menus.com" ) ) ? "Test" : "WebHost" );
+        $this->environment = ( in_array( $currentServer, Array( "localhost", "menu.vysel.com" ) ) ? "Test" : "WebHost" );
         return(true);
     }
     /**

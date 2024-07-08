@@ -32,7 +32,7 @@ class ArrowUp extends React.Component {
             <>
             <section>
 		        <div id='appUparrowGoTop' className="text-center mb-1">
-                    <a title="Go Top" href="#appNavbar">
+                    <a title="Go Top" href="#appHeader">
                         <FaArrowAltCircleUp className='text-dark app-arrow-up' />
                     </a>
                 </div>
