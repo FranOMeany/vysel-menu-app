@@ -69,11 +69,12 @@ class Footer extends React.Component {
                                 <div className="copyright text-start">
                                     <FormattedMessage
                                         id = "app.footer-copyright"
-                                        defaultMessage="{copy} {year} {company}"
+                                        defaultMessage="{copy} {year} {company} {dash}"
                                         values={{
                                             copy: <>&copy;</>,
-                                            company: <strong><span className="me-2">{ this.props.business }</span></strong>,
-                                            year: this.getYear()
+                                            company: <strong><span>{ this.props.business }</span></strong>,
+                                            year: this.getYear(),
+                                            dash: <>&ndash;</>
                                         }}
                                     />
                                 </div>

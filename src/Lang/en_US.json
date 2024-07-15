@@ -21,5 +21,5 @@
     "app-menu-view-map": "View on Google Maps",
     "app-nav-view-map": "View map",
     "app-powered-by": "Powered by Vysel {trade}",
-    "app.footer-copyright":"{copy} {year} {company} All rights reserved."
+    "app.footer-copyright":"{copy} {year} {company} {dash} All rights reserved."
 }

@@ -1,0 +1,7 @@
+
+.app-bus-info {
+    position: absolute;
+    width: 100%;
+    z-index: 12;
+    margin-top: 5rem !important;
+}

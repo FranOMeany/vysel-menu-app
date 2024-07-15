@@ -53,7 +53,7 @@ switch($method) {
         $displayItems = $dbSet->dbQuery( $dbQuery );
 
 
-        $dbQuery = "SELECT * FROM tbl_categories ORDER BY cat_position * 1 ASC";
+        $dbQuery = "SELECT * FROM tbl_categories WHERE cat_account = {$_POST['account']} ORDER BY cat_position * 1 ASC";
         $categories = $dbSet->dbQuery( $dbQuery );
 
         $dbSet->dbClose();

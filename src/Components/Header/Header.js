@@ -19,9 +19,9 @@ import { FaCcAmex } from "react-icons/fa";
 import { FaCcApplePay } from "react-icons/fa";
 import { FaMoneyBillAlt } from "react-icons/fa";
 import { BiSolidDish } from "react-icons/bi";
+import { RiMapPinFill } from "react-icons/ri";
 import Utility from '../Utility/Utility';
 import logo from '../../mainLogo.jpg';
-import map from '../../map.png';
 import '../Header/Header.css';
 
 class Header extends Component {
@@ -62,17 +62,29 @@ class Header extends Component {
 					document.getElementById('acctBusCityState').innerHTML = self.profile.account.cus_city_state_zip;
 					document.getElementById('acctBusPhone').innerHTML = self.profile.account.cus_bus_phone;
 
-
 					switch( self.theme ) {
-						case "0":
+						case "0":		//- Default header with customer logo/image
 							document.getElementById("appHeader").className += "app-theme-no-img";
+							document.getElementById('appBtnViewMap').style.color = "#000000";
 							break;
-						case "1":
+						case "1":		//- Alternate image selected by customer
 							document.getElementById("appHeader").className += " app-theme-img";
-							document.getElementById("appMainImageDiv").className += " d-none";
+							document.getElementById("appMainImage").remove();
 							document.getElementById("appHeaderLeft").className += " text-white position-relative";
 							document.getElementById("appHeaderCenter").className += " text-white position-relative";
 							document.getElementById("appHeaderRight").className += " text-white position-relative";
+							document.getElementById("appBusinessTitle").innerHTML = self.profile.account.cus_bus_name;
+							document.getElementById("appMainTitleDiv").classList.remove("d-none");
+							document.getElementById("appMainImageDiv").style.marginTop = "25%";
+
+							if( self.profile.account.cus_bus_alt_img !== null ) {
+								const altImg = self.profile.account.cus_bus_alt_img;
+								const appMainHdr = document.getElementById("appHeader");
+								appMainHdr.style.background = "linear-gradient(rgba(35, 35, 35, 0.5), rgba(35,35,35,.5)), url(./assets/images/samples/" + altImg + ")";
+								appMainHdr.style.backgroundSize = "cover";
+								appMainHdr.style.backgroundRepeat = "no-repeat";
+								appMainHdr.style.backgroundPositionX = "center";
+							}
 							break;
 						case "2":		//- Carousel
 							break;
@@ -96,7 +108,10 @@ class Header extends Component {
 					document.getElementById('appBusSaturday').innerHTML		= ( satHrs[0] === null ? ( self.lng === 'en' ? "Closed" : "Cerrado" ) : satHrs[0] + " - " + satHrs[1] );
 					document.getElementById('appBusSunday').innerHTML		= ( sunHrs[0] === null ? ( self.lng === 'en' ? "Closed" : "Cerrado" ) : sunHrs[0] + " - " + sunHrs[1] );
 
-					document.getElementById('appNavToMap').classList.add("d-none");		//- Remove "View map" link
+					document.getElementById('appNavToMap').classList.add("d-none");						//- Remove "View map" link
+					document.getElementById('appViewMapBtn').classList.add( ( self.theme === "0" ? "text-dark" : "text-white" ) );
+					document.getElementById('appViewMapBtn').classList.remove("btn-light");
+					
 					self.mounted = true;
 				}
 			}
@@ -138,7 +153,12 @@ class Header extends Component {
 				<div id="appHeaderCenter" className="col-lg-4 text-center mt-2">
 					<div id="appMainImageDiv">
 						<img id="appMainImage" className="app-img-round mb-2" src={logo} alt="" />
-						<div className='row'>
+						<div id="appMainTitleDiv" className='row d-none'>
+							<div className='col-lg-12'>
+								<h1 id="appBusinessTitle"></h1>
+							</div>
+						</div>
+						<div id='appFoodTypeDiv' className='row'>
 							<div className='col-lg-12'>
 								<span><BiSolidDish className='me-2 app-icon-15' /></span>
 								<span className="acctFoodType"></span>
@@ -226,12 +246,12 @@ class Header extends Component {
 
 					<div className="row text-center mt-3">
 						<div className="col">
-							<Button onClick={this.scrollToMap} variant="secondary" size="lg" >
-							<img src={map} alt="" />
-							<FormattedMessage
-								id = "app-get-directions"
-								defaultMessage="Get directions"
-							/>
+							<Button id="appViewMapBtn" className='bg-transparent' onClick={this.scrollToMap} variant="light" size="sm" >
+								<RiMapPinFill id='appBtnViewMap' className='app-btn-view-map text-warning' />
+								<FormattedMessage
+									id = "app-get-directions"
+									defaultMessage="Get directions"
+								/>
 							</Button>
 						</div>
 					</div>

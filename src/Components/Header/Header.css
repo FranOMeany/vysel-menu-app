@@ -42,11 +42,11 @@
 }
 
 .app-theme-img {
-    /* background: linear-gradient(rgba(35, 35, 35, 0.5), rgba(35,35,35,.5)), url(/src/mainLogo.jpg); */
     background: linear-gradient(rgba(35, 35, 35, 0.5), rgba(35,35,35,.5)), url(/public/assets/images/samples/restaurant_6.jpg);
-    background-repeat: no-repeat;
+    /*background-repeat: no-repeat;
     background-size: cover;
-    background-position: 50% 50%;
+    background-position: 50% 50%;*/
+    background-position-y: center !important;
 }
 
 .app-theme-no-img {
@@ -65,6 +65,12 @@
 .app-icon-15 {
     width: 1.5rem !important;
     height: 1.5rem !important;
+}
+
+.app-btn-view-map {
+    margin-right: .5rem !important;
+    font-size: xxx-large !important;
+    /*color: #fff600;*/
 }
 
 .form-check .form-check-input {

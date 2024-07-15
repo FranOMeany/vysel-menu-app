@@ -63,6 +63,7 @@ body {
 .app-cat-image {
     width: 6rem !important;
     border-radius: 30% !important;
+    box-shadow: 20px 20px 30px #0006 !important;
 }
 
 .card-img-top {

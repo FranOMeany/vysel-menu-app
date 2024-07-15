@@ -27,12 +27,16 @@ class ArrowUp extends React.Component {
         }
     }
 
+    scrollToTop = () => {
+        window.scrollTo( 0,0 );
+    }
+
     render() {
         return(
             <>
             <section>
-		        <div id='appUparrowGoTop' className="text-center mb-1">
-                    <a title="Go Top" href="#appHeader">
+		        <div id='appUparrowGoTop' className="text-center mb-1" onClick={this.scrollToTop}>
+                    <a title="Go Top" href="#appHeader" onClick={this.scrollToTop}>
                         <FaArrowAltCircleUp className='text-dark app-arrow-up' />
                     </a>
                 </div>
