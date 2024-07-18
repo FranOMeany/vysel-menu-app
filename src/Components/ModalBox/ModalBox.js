@@ -43,7 +43,7 @@ class ModalBox extends React.Component {
                     size="lg"
                     aria-labelledby="contained-modal-title-vcenter"
                     centered>
-              <Modal.Header closeButton style={{backgroundColor: 'bisque'}}>
+              <Modal.Header closeButton style={{backgroundColor: '#CFE2FF'}}>
                 <Modal.Title id="contained-modal-title-vcenter"></Modal.Title>
               </Modal.Header>
               <Modal.Body>

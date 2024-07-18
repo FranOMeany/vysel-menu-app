@@ -49,7 +49,7 @@ class MenuList extends React.Component {
                     }
 
                     if( self.profile.displayItems[0].itm_group !== undefined && self.profile.categories ) {     //- If we have items on this profile
-                        let imgPath = "./assets/images/";                                                       //- Set images path
+                        //let imgPath = "./assets/images/";                                                       //- Set images path
                         let thisGroup = self.profile.displayItems[0].itm_group;                                 //- Get current group
                         let groupId = "appFoodItems" + thisGroup;                                               //- Get group ID
                         let itemsGroup = document.getElementById( groupId );                                    //- Get group element
@@ -74,7 +74,8 @@ class MenuList extends React.Component {
                             }
 
                             if( item.itm_account !== null ) {                                                   //- If item account is not NULL
-                                let acctPath = imgPath + item.itm_account;                                      //- Set account path
+                                //let acctPath = imgPath + item.itm_account;                                      //- Set account path
+                                let acctPath = "./accounts/" + item.itm_account;                                      //- Set account path
                                 
                                 //- Create item image div
                                 let imgDiv = document.createElement( "div" );
@@ -182,6 +183,11 @@ class MenuList extends React.Component {
         const itemStatus = document.getElementById( itemLocation ).getAttribute("status");                      //- Get item group status attribute
         document.getElementById( itemLocation ).setAttribute( "status", 
             ( itemStatus === "closed" || itemStatus === null ? "open" : "closed" ) );                           //- Set item group status ( open or closed )
+        if ( document.getElementById( itemLocation ).getAttribute("status") === "open" ) {
+            const scrollToItem 	= document.getElementById( itemLocation );
+            scrollToItem.style.scrollMarginTop = "60px";														//- Scroll up to show entire header
+		    scrollToItem.scrollIntoView( { behavior: "smooth",  inline:  'start', block: "start" } );
+        }
     }
 
     handleModalExit = (e) => {                                                                                  //- Handle modal dialog box
@@ -191,7 +197,7 @@ class MenuList extends React.Component {
     renderCategories = ( categories ) => {                                                                      //- Render item group categories
         return !categories ? "" : categories.map((cat, index) => (                                              //- A unique key is required by react
             <Accordion.Item eventKey={cat.cat_position} id={"appMenuItem" + cat.cat_position} key={cat.cat_position}>
-                <Accordion.Header><h4 className='me-2'>
+                <Accordion.Header><h4 className='me-4'>
                     <img id={"appCatImage" + cat.cat_position}  src="" alt="" className='app-cat-image' />
                     </h4><h4 id={"appItemHeader" + cat.cat_position}>Menu #{cat.cat_position}</h4>
                 </Accordion.Header>

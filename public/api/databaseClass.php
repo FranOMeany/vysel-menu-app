@@ -91,13 +91,17 @@ class databaseClass {
         switch( $dbSet ) {
             case "MySQL":
                 if( $this->environment == "Test" ) {
+                    //- Test
                     $dbInfo['dbhost'] 		= '127.0.0.1:3306';
                     $dbInfo['dbPath'] 		= '';
                     $dbInfo['dbSchema'] 	= 'mimbro';
                     $dbInfo['dbusername'] 	= 'root';
                     $dbInfo['dbuserpass'] 	= 'windows';
                 } else {
-                    
+                    //- Production
+                    $dbInfo['dbSchema'] 	= 'vysel_menus';
+                    $dbInfo['dbusername'] 	= 'vysel_menus';
+                    $dbInfo['dbuserpass'] 	= 'QuesodeCrema2k';
                 }
                 break;
             case "MSSQL":

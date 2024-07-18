@@ -42,8 +42,9 @@
 }
 
 .app-theme-img {
+    /*
     background: linear-gradient(rgba(35, 35, 35, 0.5), rgba(35,35,35,.5)), url(/public/assets/images/samples/restaurant_6.jpg);
-    /*background-repeat: no-repeat;
+    background-repeat: no-repeat;
     background-size: cover;
     background-position: 50% 50%;*/
     background-position-y: center !important;

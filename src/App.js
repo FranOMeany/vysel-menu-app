@@ -29,7 +29,7 @@ class App extends React.Component {
       this.zoom         = 15;                                                                                   //- Set map zoom
       this.busName      = this.profile.account.cus_bus_name;                                                    //- Get business name
       this.mapContent   = this.mapContent = ( this.lang === "es" ? this.profile.account.cus_bus_desc_es :       //- Get map content depending on
-      this.profile.account.cus_bus_desc_en );                                                                   //- current language selection
+                          this.profile.account.cus_bus_desc_en );                                               //- current language selection
       this.isCarousel   = ( this.profile.account.cus_bus_template === "2" ? true : false );                     //- Check if Carousel form is selected
       this.mounted	    = false;				                                                                        //- In React version 18, a change was made to strict mode so that components will mount, then unmount, then mount again. 
       //this.state        = {isData: false};

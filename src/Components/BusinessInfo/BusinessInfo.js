@@ -21,20 +21,19 @@ import { FaCcApplePay } from "react-icons/fa";
 import { FaMoneyBillAlt } from "react-icons/fa";
 import { BiSolidDish } from "react-icons/bi";
 import { RiMapPinFill } from "react-icons/ri";
-import logo from '../../mainLogo.jpg';
 import './BusinessInfo.css';
 
 class BusinessInfo extends React.Component {
     constructor(props) {
         super(props);
-        this.state		= { show: false };
+        this.state		= { show: false, mainLogo: null };
         this.Utl        = new Utility();                                                                        //- Load our Utility class
         this.mounted	= false;				                                                                //- In React version 18, a change was made to strict mode so 
         this.lang 		= this.Utl.getCookie("appLang");                                                        //- that components will mount, then unmount, then mount again. 
         this.profile 	= JSON.parse(localStorage.getItem('profile'));                                          //- Get current profile information
         this.hdrLeftId  = "appHeaderLeft" + this.props.index;
         this.hdrCntrId  = "appHeaderCenter" + this.props.index;
-        this.hdrRiteId  = "";
+        this.hdrRiteId  = "appHeaderRight" + this.props.index;
         this.acctAddrId = "acctBusAddress" + this.props.index;
         this.acctCity   = "acctBusCityState" + this.props.index;
         this.acctPhone  = "acctBusPhone" + this.props.index;
@@ -60,6 +59,9 @@ class BusinessInfo extends React.Component {
         if( !self.mounted ) {
             self.Utl.appLogger('React app DOM fully loaded on BusinessInfo component. Lang is: ', self.lang);
 
+			let mainLogo = "./accounts/" + self.profile.account.cus_account + "/" + self.profile.account.cus_logo;
+			self.setState({ mainLogo: mainLogo });																//- We have to setState for the image string to work on the src= parameter
+
             self.monHrs = ( self.profile.account.cus_bus_hours_mon === null ? [null,null] : self.profile.account.cus_bus_hours_mon.split(";") );
             self.tueHrs = ( self.profile.account.cus_bus_hours_tue === null ? [null,null] : self.profile.account.cus_bus_hours_tue.split(";") );
             self.wedHrs = ( self.profile.account.cus_bus_hours_wed === null ? [null,null] : self.profile.account.cus_bus_hours_wed.split(";") );
@@ -68,7 +70,6 @@ class BusinessInfo extends React.Component {
             self.satHrs = ( self.profile.account.cus_bus_hours_sat === null ? [null,null] : self.profile.account.cus_bus_hours_sat.split(";") );
             self.sunHrs = ( self.profile.account.cus_bus_hours_sun === null ? [null,null] : self.profile.account.cus_bus_hours_sun.split(";") );
             self.foodTy = ( self.lang === 'en' ? self.profile.account.cus_food_type_en : self.profile.account.cus_food_type_es );
-
             self.mounted = true;
         }
     }
@@ -79,9 +80,10 @@ class BusinessInfo extends React.Component {
 	}
 
     render() {
+		const thisClass = "row app-bus-info " + this.props.addClass;
         return(	
             this.mounted ?
-            <div className="row app-bus-info">
+            <div id={this.props.id} className={thisClass}>
                 <div id={this.hdrLeftId} className="col-lg-4 text-center mt-2">
                 <h5><FaStar className='text-warning' /><FaStar className='text-warning' /><FaStar className='text-warning' /><FaStar className='text-warning' /><FaStarHalfAlt className='text-warning' /></h5>
 					<h5><BiSolidDish className='app-icon-15' /> <span className="acctFoodType">{this.foodTy}</span></h5>
@@ -105,9 +107,9 @@ class BusinessInfo extends React.Component {
 					</p>
                 </div>
 
-                <div id={this.hdrLeftId} className="col-lg-4 text-center mt-2">
+                <div id={this.hdrCntrId} className="col-lg-4 text-center mt-2">
 					<div id={this.mainImgDiv} style={{marginTop: '15%'}}>
-						{ this.props.theme === "1" && <img id={this.mainImg} className="app-img-round mb-2" src={logo} alt="" /> }
+						{ this.props.theme === "0" && <img id={this.mainImg} className="app-img-round mb-2" src={this.state.mainLogo} alt="" /> }
 						<div className='row'>
 							<div className='col-lg-12'>
 								<h1 id={this.busTitle}>
